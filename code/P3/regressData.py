@@ -42,7 +42,7 @@ Ay = np.array([i[0] for i in Ay])
 By = np.array([i[0] for i in By])
 Vy = np.array([i[0] for i in Vy])
 
-# print(VX)
+print(VX)
 
 def arr(x):
     return np.array(x)
@@ -58,8 +58,7 @@ def poly_basis(M):
 
 def poly_SSE(X, y, M, w):
     N = len(X)
-    # w = max_likelihood_weight_vector(X, y, M)
-    # print([(y[i] - dot(T(w), [poly_basis(M)[j](X[i]) for j in range(M+1)]))**1 for i in range(N)])
+    print("X0!!!!: ", X[0])
     return sum([(y[i] - dot(T(w), [poly_basis(M)[j](X[i]) for j in range(M+1)]))**2 for i in range(N)])
 
 def rr_max_likelihood_weight_vector(X, y, M, L):
@@ -69,29 +68,29 @@ def rr_max_likelihood_weight_vector(X, y, M, L):
     return dot(dot(inv(L*np.identity(phiT.shape[0])+dot(phiT, phi)),phiT),y)
 
 
-# # A train, B test
-#
-# results = []
-#
-# for L in [0, 0.001, 0.01, 0.1, 1, 10]:
-#     for M in [1, 2, 4, 8]:
-#         # train using A
-#         w = rr_max_likelihood_weight_vector(AX, Ay, M, L)
-#         # find error on validation set
-#         sse = poly_SSE(VX, Vy, M, w)
-#         results.append((M, L, sse))
-#
-# print("Best A validation results: (M, L, SSE) = " + str(sorted(results, key = lambda x: x[2])[0]))
-#
-# # print("ALL RESULTS: ", sorted(results, key = lambda x: x[2]))
-#
-# ### test on B now
-#
-# M_test_b, L_test_b = sorted(results, key = lambda x: x[2])[0][0], sorted(results, key = lambda x: x[2])[0][1]
-# w_test_b = rr_max_likelihood_weight_vector(AX, Ay, M_test_b, L_test_b)
-# sse_test_b = poly_SSE(BX, By, M_test_b, w_test_b)
-#
-# print("Test B SSE: " + str(sse_test_b))
+# A train, B test
+
+results = []
+
+for L in [0, 0.001, 0.01, 0.1, 1, 10]:
+    for M in [1, 2, 4, 8]:
+        # train using A
+        w = rr_max_likelihood_weight_vector(AX, Ay, M, L)
+        # find error on validation set
+        sse = poly_SSE(VX, Vy, M, w)
+        results.append((M, L, sse))
+
+print("Best A validation results: (M, L, SSE) = " + str(sorted(results, key = lambda x: x[2])[0]))
+
+# print("ALL RESULTS: ", sorted(results, key = lambda x: x[2]))
+
+### test on B now
+
+M_test_b, L_test_b = sorted(results, key = lambda x: x[2])[0][0], sorted(results, key = lambda x: x[2])[0][1]
+w_test_b = rr_max_likelihood_weight_vector(AX, Ay, M_test_b, L_test_b)
+sse_test_b = poly_SSE(BX, By, M_test_b, w_test_b)
+
+print("Test B SSE: " + str(sse_test_b))
 
 ####################################################################################
 
