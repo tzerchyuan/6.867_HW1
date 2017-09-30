@@ -112,9 +112,9 @@ def poly_sgd(start, thresh, learning_rate, X, y, M):
 
 
 
-M = 3
-w = max_likelihood_weight_vector(X, y, M)
-print max_likelihood_weight_vector(X, y, 3)
+# M = 3
+# w = max_likelihood_weight_vector(X, y, M)
+# print max_likelihood_weight_vector(X, y, 3)
 # print poly_SSE(X, y, M, w)
 # plot_poly_regression(X, y, 10)
 # print poly_SSE_derivative(X, y, M, 1.2*w)
@@ -122,8 +122,8 @@ print max_likelihood_weight_vector(X, y, 3)
 # print w
 #
 # print("SOL: ", w)
-print("GD converged to: ", poly_grad_descent(1.2*w, 0.00000001, 0.01, X, y, M)[0])
-print(poly_sgd(1.2*w, 0.000001, 0.001, X, y, M)[0])
+# print("GD converged to: ", poly_grad_descent(1.2*w, 0.00000001, 0.01, X, y, M)[0])
+# print(poly_sgd(1.2*w, 0.000001, 0.001, X, y, M)[0])
 
 def poly_cos_basis(M):
     return [(lambda y: (lambda x: math.cos(y*math.pi*x)))(i) for i in range(M + 1)]
@@ -153,11 +153,12 @@ def rr_max_likelihood_weight_vector(X, y, M, L):
 # M = 2
 # L = .1
 # print(rr_max_likelihood_weight_vector(X, y, M, L))
-#
-# for L in [0, 0.01, 0.1, 1, 10]:
-#     for M in [2]:
-#         mlwv = rr_max_likelihood_weight_vector(X, y, M, L)
-#
-#         plt.plot(X, y, 'o')
-#         plt.plot(X, [dot(mlwv, arr([poly_basis(M)[i](X[j]) for i in range(M + 1)])) for j in range(len(X))], 'x')
-#         plt.show()
+
+for L in [0, 0.01, 0.1, 1, 10]:
+    for M in [2]:#[1, 2, 4, 8]:
+        mlwv = rr_max_likelihood_weight_vector(X, y, M, L)
+
+        plt.plot(X, y, 'o')
+        plt.plot(X, [dot(mlwv, arr([poly_basis(M)[i](X[j]) for i in range(M + 1)])) for j in range(len(X))], 'x')
+        plt.title("Ridge Regression (Lambda = " + str(L) + ")")
+        plt.show()

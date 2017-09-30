@@ -42,7 +42,7 @@ Ay = np.array([i[0] for i in Ay])
 By = np.array([i[0] for i in By])
 Vy = np.array([i[0] for i in Vy])
 
-print(VX)
+# print(VX)
 
 def arr(x):
     return np.array(x)
@@ -58,7 +58,7 @@ def poly_basis(M):
 
 def poly_SSE(X, y, M, w):
     N = len(X)
-    print("X0!!!!: ", X[0])
+    # print("X0!!!!: ", X[0])
     return sum([(y[i] - dot(T(w), [poly_basis(M)[j](X[i]) for j in range(M+1)]))**2 for i in range(N)])
 
 def rr_max_likelihood_weight_vector(X, y, M, L):
@@ -108,7 +108,7 @@ for L in [0, 0.001, 0.01, 0.1, 1, 10]:
 
 print("Best B validation results: (M, L, SSE) = " + str(sorted(results2, key = lambda x: x[2])[0]))
 
-# print("ALL RESULTS: ", sorted(results, key = lambda x: x[2]))
+print("ALL RESULTS: ", sorted(results, key = lambda x: x[2]))
 
 ### test on A now
 

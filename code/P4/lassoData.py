@@ -4,7 +4,7 @@ import pylab as pl
 from sklearn import linear_model
 import math
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 # X is an array of N data points (one dimensional for now), that is, NX1
 # Y is a Nx1 column vector of data values
@@ -24,6 +24,9 @@ def lassoValData():
 
 def lassoTestData():
     return getData('lasso_test.txt')
+
+def getTrueW(name):
+    return pl.loadtxt(name)
 
 def arr(x):
     return np.array(x)
@@ -66,6 +69,7 @@ def rr_max_likelihood_weight_vector(X, y, M, L):
     phiT = T(phi)
     return dot(dot(inv(L*np.identity(phiT.shape[0])+dot(phiT, phi)),phiT),y)
 
+trueW = getTrueW("lasso_true_w.txt")
 trainX, trainY, = lassoTrainData()
 validateX, validateY, = lassoValData()
 testX, testY = lassoTestData()
@@ -123,23 +127,59 @@ print("Test SSE: " + str(sse_test))
 
 """#######################################################################################"""
 
-results = []
+results_ridge = []
 
 for L in [.01, .025, .05, .1, .25, .5, .75, 1, 1.5, 2, 5]:
     # train using train data
     w = rr_max_likelihood_weight_vector(trainX, trainY, M, L)
     # find error on validation set
     sse = lasso_SSE(validateX, validateY, M, w)
-    results.append((L, sse))
+    results_ridge.append((L, sse))
 
-print("Best ridge validation results: (L, SSE) = " + str(sorted(results, key = lambda x: x[1])[0]))
+print("Best ridge validation results: (L, SSE) = " + str(sorted(results_ridge, key = lambda x: x[1])[0]))
 
 # print("ALL RESULTS: ", sorted(results, key = lambda x: x[2]))
 
 ### test on test data now
 
-L_test_b = sorted(results, key = lambda x: x[1])[0][0]
+L_test_b = sorted(results_ridge, key = lambda x: x[1])[0][0]
 w_test_b = rr_max_likelihood_weight_vector(trainX, trainY, M, L_test_b)
 sse_test_b = lasso_SSE(testX, testY, M, w_test_b)
 
 print("Test B SSE: " + str(sse_test_b))
+
+
+plt.bar([i for i in range(1,M+1)],trueW+[.000001]*M)
+plt.xlabel("Parameter Number")
+plt.ylabel("Parameter Value")
+plt.title("True Parameter Values")
+plt.show()
+
+plt.bar([i for i in range(1,M+1)],w_test+[.000001]*M)
+plt.xlabel("Parameter Number")
+plt.ylabel("Parameter Value")
+plt.title("LASSO Parameter Values")
+plt.show()
+
+plt.bar([i for i in range(1,M+1)],w_test_b+[.000001]*M)
+plt.xlabel("Parameter Number")
+plt.ylabel("Parameter Value")
+plt.title("Ridge Regression Parameter Values")
+plt.show()
+
+
+l_strs = [math.log(i) for i in [.01, .025, .05, .1, .25, .5, .75, 1, 1.5, 2, 5]]
+results_sses = [results[i][1] for i in range(len(results))]
+results_ridge_sses = [results_ridge[i][1] for i in range(len(results_ridge))]
+
+plt.bar(l_strs,results_sses)
+plt.xlabel("log(Lambda)")
+plt.ylabel("LASSO SSE")
+plt.title("Lasso SSE vs log(Lambda)")
+plt.show()
+
+plt.bar(l_strs,results_ridge_sses)
+plt.xlabel("log(Lambda)")
+plt.ylabel("Ridge SSE")
+plt.title("Ridge SSE vs log(Lambda)")
+plt.show()
