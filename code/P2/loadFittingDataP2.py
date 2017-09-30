@@ -40,11 +40,12 @@ def max_likelihood_weight_vector(X, y, M):
 
 X, y = getData(False)
 
-# for M in [0, 1, 2, 3, 6, 10]:
+# for M in [0, 1, 3, 10]:
 #     mlwv = max_likelihood_weight_vector(X, y, M)
 #
 #     plt.plot(X, y, 'o')
 #     plt.plot(X, [dot(mlwv, arr([poly_basis(M)[i](X[j]) for i in range(M + 1)])) for j in range(len(X))], 'x')
+#     plt.title("Linear Regression with Polynomial Basis (M = " + str(M) + ")")
 #     plt.show()
 
 def plot_poly_regression(X, y, M):
@@ -99,31 +100,35 @@ def poly_sgd(start, thresh, learning_rate, X, y, M):
     norms = []
     ws = []
     old_w = start
-    new_w = old_w - learning_rate*poly_SSE_derivative([X[0]], y[0], M, old_w)
+    new_w = old_w - 0.005*poly_SSE_derivative([X[0]], y[0], M, old_w)
     norms.append(np.linalg.norm(poly_SSE_derivative([X[0]], y[0], M, old_w)))
     ws.append(old_w)
     i = 1
-    while (abs(np.linalg.norm(old_w - new_w)) >= thresh and np.linalg.norm(poly_SSE_derivative([X[0]], y[0], M, new_w)) >= thresh):
+    ind = i % len(X)
+    while (abs(np.linalg.norm(old_w - new_w)) >= thresh and np.linalg.norm(poly_SSE_derivative([X[ind]], y[ind], M, new_w)) >= thresh):
         ind = i % len(X)
         old_w = new_w
-        new_w = old_w - learning_rate*poly_SSE_derivative([X[ind]], y[ind], M, old_w)
+        n = (learning_rate * i)**-0.65
+        new_w = old_w - n*poly_SSE_derivative([X[ind]], y[ind], M, old_w)
+        if i % 1000 == 0:
+            print(new_w)
         i += 1
     return new_w, norms, ws
 
 
 
-# M = 3
-# w = max_likelihood_weight_vector(X, y, M)
-# print max_likelihood_weight_vector(X, y, 3)
-# print poly_SSE(X, y, M, w)
-# plot_poly_regression(X, y, 10)
-# print poly_SSE_derivative(X, y, M, 1.2*w)
-# print approx_grad_poly(X, y, M, 1.2*w, [0.001]*len(w))
-# print w
-#
-# print("SOL: ", w)
-# print("GD converged to: ", poly_grad_descent(1.2*w, 0.00000001, 0.01, X, y, M)[0])
-# print(poly_sgd(1.2*w, 0.000001, 0.001, X, y, M)[0])
+for M in [0, 1, 3, 10]:
+    w = max_likelihood_weight_vector(X, y, M)
+    # print max_likelihood_weight_vector(X, y, 3)
+    # print poly_SSE(X, y, M, w)
+    # plot_poly_regression(X, y, 10)
+    # print poly_SSE_derivative(X, y, M, 1.2*w)
+    # print approx_grad_poly(X, y, M, 1.2*w, [0.001]*len(w))
+    # print w
+
+    print(str(M) + " SOL: ", w)
+    print(str(M) + " BGD converged to: ", poly_grad_descent(1.2*w, 0.000001, 0.01, X, y, M)[0])
+    print(str(M) + " SGD converged to: ", poly_sgd(1.2*w, 0.000001, 50, X, y, M)[0])
 
 def poly_cos_basis(M):
     return [(lambda y: (lambda x: math.cos(y*math.pi*x)))(i) for i in range(M + 1)]
@@ -153,12 +158,12 @@ def rr_max_likelihood_weight_vector(X, y, M, L):
 # M = 2
 # L = .1
 # print(rr_max_likelihood_weight_vector(X, y, M, L))
-
-for L in [0, 0.01, 0.1, 1, 10]:
-    for M in [2]:#[1, 2, 4, 8]:
-        mlwv = rr_max_likelihood_weight_vector(X, y, M, L)
-
-        plt.plot(X, y, 'o')
-        plt.plot(X, [dot(mlwv, arr([poly_basis(M)[i](X[j]) for i in range(M + 1)])) for j in range(len(X))], 'x')
-        plt.title("Ridge Regression (Lambda = " + str(L) + ")")
-        plt.show()
+#
+# for L in [0, 0.01, 0.1, 1, 10]:
+#     for M in [2]:#[1, 2, 4, 8]:
+#         mlwv = rr_max_likelihood_weight_vector(X, y, M, L)
+#
+#         plt.plot(X, y, 'o')
+#         plt.plot(X, [dot(mlwv, arr([poly_basis(M)[i](X[j]) for i in range(M + 1)])) for j in range(len(X))], 'x')
+#         plt.title("Ridge Regression (Lambda = " + str(L) + ")")
+#         plt.show()
